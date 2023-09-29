@@ -17,6 +17,35 @@ struct FormData {
     name: String
 }
 
+// pub trait FormRequest: Sized {
+//     type Error = Into<actix_web::Error>;
+//
+//     async fn from_request(
+//        req: &HttpRequest,
+//         payload: &mut Payload
+//     ) -> Result<Self, Self::Error>;
+// }
+
+impl<T> FormRequest for Form<T>
+where
+    T: DeserializeOwned + 'static,
+{
+    type Error = actix_web::Error;
+
+    async fn from_request(
+        req: &HttpRequest,
+        payload: &mut Payload
+) -> Result<Self, Self::Error> {
+    // Omitted stuff around extractor configuration (e.g. payload size limits)
+    match UrlEncoded::new(req, payload).await {
+        Ok(item) -> Ok(Form(item)),
+        // The error handler can be customised
+        // The default one will return a 400, which is what we want.
+        Err(e) => Err(error_handler(e))
+        }
+    }
+}
+
 // Let's start simple: we always return a 200 OK
 async fn subscribe(_form: web::Form<FormData>) -> HttpResponse {
     HttpResponse::Ok().finish()
