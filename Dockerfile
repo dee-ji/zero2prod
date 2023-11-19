@@ -1,5 +1,5 @@
 # We use the latest Rust stable release as base image
-FROM lukemathwalker/cargo-chef:latest-rust-1.72.1 as chef
+FROM lukemathwalker/cargo-chef:latest-rust-1.65.0 as chef
 WORKDIR /app
 # Install the required system dependencies for our linking configuration
 RUN apt update && apt install lld clang -y
