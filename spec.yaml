@@ -1,4 +1,5 @@
 #! spec.yaml
+name: zero2prod
 # Check https://www.digitalocean.com/docs/app-platform/#regional-availability
 # for a list of all the available options.
 # You can get region slugs from
@@ -7,7 +8,7 @@
 # `fra` stands for Frankfurt (Germany - EU)
 region: fra
 services:
-  - name: zer2prod
+  - name: zero2prod
     # Relative to the repository root
     dockerfile_path: Dockerfile
     source_dir: .
@@ -61,4 +62,4 @@ databases:
     num_nodes: 1
     size: db-s-dev-database
     # Postgres version - using the latest here
-    version: "14"
+    version: "12"
