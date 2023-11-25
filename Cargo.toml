@@ -4,11 +4,11 @@ version = "0.1.0"
 authors = ["David Johnson <dmjohn061@gmail.com>"]
 edition = "2021"
 
-[target.x86_64-pc-windows-msvc]
-rustflags = ["-C", "link-arg=-fuse-ld=lld"]
-
-[target.x86_64-pc-windows-gnu]
-rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+#[target.x86_64-pc-windows-msvc]
+#rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+#
+#[target.x86_64-pc-windows-gnu]
+#rustflags = ["-C", "link-arg=-fuse-ld=lld"]
 
 [lib]
 # We could use any path here, but we are following the community convention

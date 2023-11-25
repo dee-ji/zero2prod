@@ -4,7 +4,6 @@ use chrono::Utc;
 use uuid::Uuid;
 use actix_web::{web, HttpResponse};
 use sqlx::PgPool;
-use unicode_segmentation::UnicodeSegmentation;
 use crate::domain::{NewSubscriber, SubscriberEmail, SubscriberName};
 
 impl TryFrom<FormData> for NewSubscriber {

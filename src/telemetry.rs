@@ -17,9 +17,9 @@ use tracing_subscriber::fmt::MakeWriter;
 /// `Send` and `Sync` to make it possible to pass it to `init_subscriber`
 /// later on.
 pub fn get_subscriber<Sink>(
-    name: String,
-    env_filter: String,
-    sink: Sink,
+    _name: String,
+    _env_filter: String,
+    _sink: Sink,
 ) -> impl Subscriber + Send + Sync
     where
         // This "weird" syntax is a higher-ranked trait bound (HRTB)
