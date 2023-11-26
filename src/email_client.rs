@@ -15,7 +15,7 @@ impl EmailClient {
     pub fn new(
         base_url: String,
         sender: SubscriberEmail,
-        authorization_token: Secret<String>
+        authorization_token: Secret<String>,
     ) -> Self {
         Self {
             http_client: Client::new(),
@@ -29,7 +29,7 @@ impl EmailClient {
         recipient: SubscriberEmail,
         subject: &str,
         html_content: &str,
-        text_content: &str
+        text_content: &str,
     ) -> Result<(), reqwest::Error> {
         let url = format!("{}/email", self.base_url);
         let request_body = SendEmailRequest {
@@ -44,7 +44,7 @@ impl EmailClient {
             .post(&url)
             .header(
                 "X-Postmark-Server-Token",
-                self.authorization_token.expose_secret()
+                self.authorization_token.expose_secret(),
             )
             .json(&request_body)
             .send()
@@ -71,17 +71,16 @@ mod tests {
     use fake::faker::internet::en::SafeEmail;
     use fake::faker::lorem::en::{Paragraph, Sentence};
     use fake::{Fake, Faker};
-    use wiremock::matchers::{header, header_exists, method, path};
-    use wiremock::{Mock, MockServer, ResponseTemplate};
-    use wiremock::Request;
     use secrecy::Secret;
+    use wiremock::matchers::{header, header_exists, method, path};
+    use wiremock::Request;
+    use wiremock::{Mock, MockServer, ResponseTemplate};
 
     struct SendEmailBodyMatcher;
 
     impl wiremock::Match for SendEmailBodyMatcher {
         fn matches(&self, request: &Request) -> bool {
-            let result: Result<serde_json::Value, _> =
-                serde_json::from_slice(&request.body);
+            let result: Result<serde_json::Value, _> = serde_json::from_slice(&request.body);
             if let Ok(body) = result {
                 dbg!(&body);
                 body.get("From").is_some()
@@ -100,11 +99,7 @@ mod tests {
         // Arrange
         let mock_server = MockServer::start().await;
         let sender = SubscriberEmail::parse(SafeEmail().fake()).unwrap();
-        let email_client = EmailClient::new(
-            mock_server.uri(),
-            sender,
-            Secret::new(Faker.fake())
-        );
+        let email_client = EmailClient::new(mock_server.uri(), sender, Secret::new(Faker.fake()));
         Mock::given(header_exists("X-Postmark-Server-Token"))
             .and(header("Content-Type", "application/json"))
             .and(path("/email"))

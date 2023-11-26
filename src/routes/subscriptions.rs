@@ -1,10 +1,10 @@
 //! src/routes/subscriptions.rs
-use std::convert::TryFrom;
-use chrono::Utc;
-use uuid::Uuid;
-use actix_web::{web, HttpResponse};
-use sqlx::PgPool;
 use crate::domain::{NewSubscriber, SubscriberEmail, SubscriberName};
+use actix_web::{web, HttpResponse};
+use chrono::Utc;
+use sqlx::PgPool;
+use std::convert::TryFrom;
+use uuid::Uuid;
 
 impl TryFrom<FormData> for NewSubscriber {
     type Error = String;
@@ -19,7 +19,7 @@ impl TryFrom<FormData> for NewSubscriber {
 #[derive(serde::Deserialize)]
 pub struct FormData {
     email: String,
-    name: String
+    name: String,
 }
 
 pub fn parse_subscriber(form: FormData) -> Result<NewSubscriber, String> {
@@ -36,23 +36,20 @@ pub fn parse_subscriber(form: FormData) -> Result<NewSubscriber, String> {
         subscriber_name = %form.name
     )
 )]
-pub async fn subscribe(
-    form: web::Form<FormData>,
-    pool: web::Data<PgPool>
-) -> HttpResponse {
+pub async fn subscribe(form: web::Form<FormData>, pool: web::Data<PgPool>) -> HttpResponse {
     let new_subscriber = match form.0.try_into() {
         Ok(form) => form,
         Err(_) => return HttpResponse::BadRequest().finish(),
     };
     match insert_subscriber(&pool, &new_subscriber).await {
         Ok(_) => HttpResponse::Ok().finish(),
-        Err(_) => HttpResponse::InternalServerError().finish()
+        Err(_) => HttpResponse::InternalServerError().finish(),
     }
 }
 
 #[tracing::instrument(
     name = "Saving new subscriber details in the database",
-    skip(new_subscriber, pool),
+    skip(new_subscriber, pool)
 )]
 pub async fn insert_subscriber(
     pool: &PgPool,
@@ -73,9 +70,9 @@ pub async fn insert_subscriber(
     .map_err(|e| {
         tracing::error!("Failed to execute query: {:?}", e);
         e
-    // Using the `?` operator to return early
-    // if the function failed, returning a sqlx::Error
-    // We will talk about error handling in depth later!
+        // Using the `?` operator to return early
+        // if the function failed, returning a sqlx::Error
+        // We will talk about error handling in depth later!
     })?;
     Ok(())
 }

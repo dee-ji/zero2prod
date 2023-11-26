@@ -1,10 +1,9 @@
 //! src/configuration.rs
-use secrecy::{Secret, ExposeSecret};
+use crate::domain::SubscriberEmail;
+use secrecy::{ExposeSecret, Secret};
 use serde_aux::field_attributes::deserialize_number_from_string;
 use sqlx::postgres::{PgConnectOptions, PgSslMode};
 use sqlx::ConnectOptions;
-use crate::domain::SubscriberEmail;
-
 
 #[derive(serde::Deserialize)]
 pub struct Settings {
@@ -67,8 +66,7 @@ impl DatabaseSettings {
 }
 
 pub fn get_configuration() -> Result<Settings, config::ConfigError> {
-    let base_path = std::env::current_dir()
-        .expect("Failed to determine the current directory");
+    let base_path = std::env::current_dir().expect("Failed to determine the current directory");
     let configuration_directory = base_path.join("configuration");
 
     // Detect the running environment
@@ -79,20 +77,20 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
         .expect("Failed to parse APP_ENVIRONMENT");
     let environment_filename = format!("{}.yaml", environment.as_str());
     let settings = config::Config::builder()
-    // Add configuration values from a file named `base.yaml`
-        .add_source(
-            config::File::from(configuration_directory.join("base.yaml"))
-        )
-        .add_source(
-            config::File::from(configuration_directory.join(environment_filename))
-        )
+        // Add configuration values from a file named `base.yaml`
+        .add_source(config::File::from(
+            configuration_directory.join("base.yaml"),
+        ))
+        .add_source(config::File::from(
+            configuration_directory.join(environment_filename),
+        ))
         // Add in settings from environment variables (with a prefix of APP and
         // '__' as separator)
         // E.g. `APP_APPLICATION__PORT=5001 word set `Settings.application_port`
         .add_source(
             config::Environment::with_prefix("APP")
                 .prefix_separator("_")
-                .separator("__")
+                .separator("__"),
         )
         .build()?;
     // Try to convert the configuration values it read into our Settings type
@@ -102,7 +100,7 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
 /// The possible runtime environment for our application.
 pub enum Environment {
     Local,
-    Production
+    Production,
 }
 
 impl Environment {

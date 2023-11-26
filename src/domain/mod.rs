@@ -1,7 +1,7 @@
 //! src/domain/mod.rs
-mod subscriber_name;
-mod subscriber_email;
 mod new_subscriber;
+mod subscriber_email;
+mod subscriber_name;
 
 pub use new_subscriber::NewSubscriber;
 pub use subscriber_email::SubscriberEmail;
